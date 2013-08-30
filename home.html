@@ -1,0 +1,390 @@
+<html lang="en">
+	<head>
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, target-densitydpi=device-dpi">
+		<title>GroupSpace.com</title>
+		<link href="/css/bootstrap.css" rel="stylesheet" type="text/css"> 
+		<link href="/css/bootstrap-theme.css" rel="stylesheet" type="text/css"> 
+		<link href="/css/tnt.css" rel="stylesheet" type="text/css">
+		<!-- #start_mobile_header_scripts -->
+		<!-- #end_mobile_header_scripts -->
+	</head>
+	<body>
+		<div id="splashscreen" style="display: none">
+			<div id="splashlogo">
+				<div id="spinner"></div>
+			</div>
+		</div>
+		<div id="viewport">
+			<div class="container">
+				<nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+							<span cclass="sr-only"></span>
+							<span class="icon-bar"></span>
+						    <span class="icon-bar"></span>
+						    <span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#">
+							GroupSpace
+						</a>
+					</div>
+					<div class="collapse navbar-collapse navbar-ex1-collapse" data-bind="foreach: navbar.sets">
+						<!-- ko if: active -->
+						<ul class="nav navbar-nav" role="navigation" data-bind="foreach: items">
+							<li data-bind="ifnot: menu, attr: {class: active() ? 'active' : ''}">
+								<a data-bind="attr: {href: link}, text: name" role="button"></a>
+							</li>
+							<li class="dropdown" data-bind="ifnot: link">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<span data-bind="text: name"></span> <b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu" data-bind="foreach: menu">
+									<li data-bind="attr: {class: 'dropdown-toggle ' + ( active() ? 'active' : '' )}">
+										<a data-bind="text: name, attr: {href: link}"></a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<!-- /ko -->
+					</div>
+				</nav>
+			</div>
+			<div class="container">
+				<center>
+					<div id="system-message"></div>
+				</center>
+				<div id="modal-dialogs">
+					<div id="check-email" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="overlayLabel" aria-hidden="true">
+						<div class="modal-header">
+							<h3 id="overlayLabel">Invitation Sent</h3>
+						</div>
+						<div class="modal-body">
+							<p>Please find the invitation sent to <span id="check-email-text" class="gray"></span></p>
+							<p>Rest assured, GroupSpace.Net won't send spam. If the invitation got mixed up with the wrong crowd, like, spam, consider adding <a src="mailto:team@group.net">team@group.net</a> to your contact list.</p>
+						</div>
+					</div>
+				</div>
+ 				<div id="welcome" class="navclass-a" back="#/splash">
+					<center><h1>Welcome</h1></center>
+				</div>
+				<div id="sign-up" class="navclass-a">
+					<form role="form" data-bind="with: views.SignUp.form">
+						<div data-bind="attr: {class: nameClass}">
+							<label for="signUpName">Name</label>
+							<input id="signUpName" class="form-control" name="name" data-bind="value: name" type="text" placeholder="John Smith" />
+						</div>
+						<div data-bind="attr: {class: emailClass}">
+							<label for="signUpEmail">Email</label>
+							<input id="signUpEmail" class="form-control" name="email" data-bind="value: email" type="text" placeholder="example@example.com">
+						</div>
+						<div data-bind="attr: {class: passwordClass}">
+							<label for="signUpPassword">Password</label>
+							<input id="signUpPassword" class="form-control" name="password" data-bind="value: password" type="password" />
+						</div>
+						<div data-bind="attr: {class: repeatPasswordClass}">
+							<label for="signUpRepeatPassword">Repeat Password
+							</label>
+							<input id="signUpRepeatPassword" class="form-control" name="password" data-bind="value: repeatPassword" type="password" />
+						</div>
+						<button type="submit" class="btn btn-default" data-bind="click: submit">Submit</button>
+					</form>
+				</div>
+				<div id="sign-in" class="navclass-a">
+					<form role="form" data-bind="with: views.SignIn.form">
+						<div data-bind="attr: {class: emailClass}">
+							<label for="signUpEmail">Email</label>
+							<input id="signUpEmail" class="form-control" name="email" data-bind="value: email" type="text" placeholder="example@example.com">
+						</div>
+						<div data-bind="attr: {class: passwordClass}">
+							<label for="signUpPassword">Password</label>
+							<input id="signUpPassword" class="form-control" name="password" data-bind="value: password" type="password" />
+						</div>
+						<button type="submit" class="btn btn-default" data-bind="click: submit">Submit</button>
+					</form>
+				</div>
+				<div id="reset-password" class="navclass-a">
+					<form role="form" data-bind="with: views.ResetPassword.form">
+						<div data-bind="attr: {class: passwordClass}">
+							<label for="resetPasswordA">New Password</label>
+							<input id="resetPasswordA" class="form-control" data-bind="value: password" type="password" />
+						</div>
+						<div data-bind="attr: {class: passwordRepeatClass}">
+							<label for="resetPasswordB">Repeat Password</label>
+							<input id="resetPasswordB" class="form-control" data-bind="value: passwordRepeat" type="password" />
+						</div>
+						<button type="submit" class="btn btn-default" data-bind="click: submit">Reset Password</button>
+					</form>
+				</div>
+				<div id="forgot-password" class="navclass-a">
+					<form role="form" data-bind="with: views.ForgotPassword.form">
+						<div data-bind="attr: {class: emailClass}">
+							<label for="signUpEmail">Email</label>
+							<input id="signUpEmail" class="form-control" name="email" data-bind="value: email" type="text" placeholder="example@example.com">
+						</div>
+						<button type="submit" data-bind="click: submit" class="btn btn-default">Send Reset Email</button>
+					</form>
+				</div>
+				<div id="change-password" class="navclass-a">
+					<form role="form" data-bind="with: views.ChangePassword.form">
+						<div data-bind="attr: {class: oldPasswordClass}">
+							<label for="oldPassword">Current Password</label>
+							<input id="oldPassword" class="form-control" data-bind="value: oldPassword" type="password" />
+						</div>
+						<div data-bind="attr: {class: passwordClass}">
+							<label for="resetPasswordA">New Password</label>
+							<input id="resetPasswordA" class="form-control" data-bind="value: password" type="password" />
+						</div>
+						<div data-bind="attr: {class: repeatPasswordClass}">
+							<label for="resetPasswordB">Repeat New Password
+							</label>
+							<input id="resetPasswordB" class="form-control" data-bind="value: repeatPassword" type="password" />
+						</div>
+						<button type="submit" class="btn btn-primary" data-bind="click: submit">Reset Password</button>
+					</form>
+				</div>
+				<div id="change-email" class="navclass-a">
+					<form role="form" data-bind="with: views.ChangeEmail.form">
+						<div class="form-group" data-bind="attr: {class: emailClass}">
+							<label>Change your email from <span data-bind="text: email"></span> to:</label>
+							<input value: "newEmail" placeholder="example@example.com" />
+						</div>
+						<button type="submit" class="btn btn-default" data-bind="click: submit">Submit</button>
+					</form>
+				</div>
+				<div id="group-form" class="navclass-a">
+					<form role="form" data-bind="with: views.GroupForm.form">
+						<div class="form-group" data-bind="attr: {class: nicknameClass}">
+							<label for="group-form-nickname">
+							Nickname</label>
+							<input id="group-form-nickname" class="form-control" type="text" data-bind="value: nickname" placeholder="329 Cherry Road" />
+						</div>
+						<div class="form-group" data-bind="attr: {class: passwordClass}">
+							<label for="group-form-password">
+							Common Password</label>
+							<input id="group-form-nickname" class="form-control" type="text" data-bind="value: password" placeholder="Share with your group" />
+						</div>
+						<button type="submit" class="btn btn-default" data-bind="click: submit">Submit</button>
+					</form>
+				</div>
+				<div id="entryway" class="container navclass-a"  data-bind="with: views.Doorstep">
+					<ul class="nav nav-pills nav-stacked col-sm-2 col-md-3 col-lg-3">
+						<li><a href="#/entryway/groups">Groups</a></li>
+						<li><a href="#/entryway/group-invites">Invitations <span class="badge" data-bind="text: invites.list().length, visible: invites.list().length > 0"></span></a></li>
+					</ul>
+					<div id="entryway-groups" class="navclass-b">
+						<div data-bind="visible: groups.list().length == 0">
+							<center class="gray">No groups were found.</center>
+						</div>
+						<form role="form" data-bind="visible: groups.list().length > 0">
+							<div class="form-group">
+								<ul class="unstyled" data-bind="foreach: groups.list">
+									<li>
+										<button type="button" data-bind="click: \$parent.selectGroup">enter</button> <span data-bind="text: groupNickname"></span> <!--<ul class="unstyled inline" data-bind="foreach: group.list"><li><img style="width: 15, height: 15" data-bind="src: picture"></li></ul>--><ul class="unstyled inline" data-bind="foreach: notifications.list"><li> <span class="badge" data-bind="text: notifications">
+									</li>
+								</ul>
+							</div>
+							<a href="#/group-form" class="btn btn-default">Add a group</a>
+							<a href="#/join-group" class="btn btn-default">Join a group</a>
+						</form>
+					</div>
+					<div id="entryway-group-invites" class="navclass-b">
+						<div data-bind="visible: invites.list().length == 0">
+							<center class="gray">No invitations were found.</center>
+						</div>
+						<form role="form">
+							<ul class="unstyled" data-bind="foreach: invites.list">
+								<li>
+									Invite from <span data-bind="text: inviterName"></span> <span data-bind="foreach: rommatesList, visible: groupList().length > 0"><img style="height: 15px; width: 15px;" data-bind="attr: {src: picture}" /> <button class="btn btn-default" data-bind="click: accept">accept</buttom> <button class="btn btn-default" data-bind="click: ignore">Ignore</button></span>
+								</li>
+							</ul>
+						</form>
+					</div>
+				</div>
+				<div id="overview" class="navclass-a" title="Overview">
+					<a class="btn overview-button" href="#/logout">
+						<i class="glyphicons-icon unshare"></i>
+						<h4>Logout</h4>
+					</a>
+					<a class="btn overview-button" href="#/chat-room">
+						<i class="glyphicons-icon unshare"></i>
+						<h4>Chat Room</h4>
+					</a>
+				</div>
+				<div id="chat-room" class="navclass-a" title="Chat Room">
+					<div id="chat-room-no-messages" data-bind="visible: views.ChatRoom.messages.list().length == 0">
+						<center><span class="gray">No messages found</span></center>
+					</div>
+					<ul id="chat-room-messages" class="list-unstyled" data-bind="foreach: views.ChatRoom.messages.list">
+						<li>
+							<b><span data-bind="html: authorFirstName"></span>:</b>&nbsp;<span data-bind="text: chatMessage"></span>&nbsp;
+							<span class="" data-bind="visible: yesNo() && !answered()">
+								<button class="btn btn-success btn-mini" data-bind="click: answerYes">
+								Yes</button>&nbsp;
+								<button class="btn btn-danger btn-mini" data-bind="click: answerNo">
+								No</button>&nbsp;
+							</span>
+							<span class="gray adate" style="font-size: .8em" data-bind="attr: {title: created}"></span>
+							<div data-bind="visible: yesNo() && answered(), with: answers()">
+								<ul class="unstyled inline" data-bind="foreach: list">
+									<li data-bind="visible: !isCurrentMemberAnswer()">
+										<img data-bind="attr: {src:picture}" class="small-badge"/>
+										&nbsp;
+										<span data-bind="visible: yesNo()" class="label label-success">
+										Yes</span>
+										<span data-bind="visible: !yesNo()" class="label label-important">
+										No</span>
+									</li>
+									<li data-bind="visible: isCurrentMemberAnswer()">
+										<span data-bind="visible: yesNo()" class="label label-success">
+										You replied yes</span>
+										<span data-bind="visible: !yesNo()" class="label label-important">
+										You replied no</span>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+					<div id="chat-room-new-message" data-bind="with: views.ChatRoom.form">
+						<textarea class="span12" data-bind="value: message" placeholder="compose a new message..."></textarea>
+						<button class="btn btn-primary pull-right" data-bind="click: submit">
+							Send</button>
+						<ul class="unstyled control-group inline">
+							<li>
+								<label class="checkbox">
+									<input type="checkbox" data-bind="checked: yesNo" />
+									ask yes or no
+								</label>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div id="people" class="navclass-a" title="People">
+					<ul data-bind="foreach: views.Group.people.list" class="list-unstyled">
+						<li>
+							<img class="placeholder img-45x45 pull-left" data-bind="attr: {src:picture}" />
+							<div class="pull-left">
+								<span data-bind="text: contactName"></span><br />
+							</div>
+							<div class="clearfix"></div>
+						</li>
+					</ul>
+					<center><a href="#/invite-member" class="btn">Invite Members</a></center>
+					<br />
+					<table data-bind="foreach: views.Group.invites.list()" class="list-unstyled">
+						<tr data-bind="ifnot: cancelledOn()">
+							<td><button class="btn btn-small" data-bind="click: cancel">Cancel</button>&nbsp;</td>
+							<td><span data-bind="text: inviterName.split(' ')[0] + ' invited ' + inviteeName.split(' ')[0]"></span></td>
+						</tr>
+						<tr data-bind="ifnot: cancelledOn()">
+							<td></td>
+							<td><span class="pull-right gray" data-bind="text: inviteeEmail"></span></td>
+						</tr>
+						<tr data-bind="ifnot: cancelledOn()">
+							<td></td>
+							<td>GroupKey:&nbsp;<span class="pull-right gray" data-bind="text: groupkey"></span></td>
+						</tr>
+					</table><br /><br />
+				</div>
+				<div id="invite-member" class="navclass-a" data-bind="with: views.Group.createInvite">
+					<form>
+						<div class="form-group">
+							<label>Name</label>
+							<input type="text" data-bind="value: inviteeName" id="invite-member-name" class="form-control" placeholder="John Smith">
+						</div>
+						<div class="form-group">
+							<label>Email</label>
+							<input type="text" class="form-control" data-bind="value: inviteeEmail" placeholder="john@example.com">
+						</div>
+						<button type="submit" class="btn btn-primary" data-bind="click: submit">Submit</button>
+					</form>
+				</div>
+				<div data-bind="with: views.Group.moveOut" id="move-out" class="viewport-screen navclass-a" >
+					<div>
+						<form>
+							<legend><center>Move-Out</center></legend>
+							<label>Email</label>
+							<input data-bind="value: email" type="text" class="span12" placeholder="example@example.com" />
+							<label>Password</label>
+							<input data-bind="value: password" type="password" class="span12" />
+							<button data-bind="click: submit" class="btn btn-primary btn-large">Confirm</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="/js/lib/require.js"></script>
+		<script>
+			requirejs.onError = function (err) {
+			    console.log(err.requireType);
+			    if (err.requireType === 'timeout') {
+			        console.log('modules: ' + err.requireModules);
+			    }
+			    throw err;
+			};
+			require.config({
+				baseUrl: '/js',
+				paths: {
+					jquery: 'lib/jquery-1.9.1',
+					underscore: [
+						'//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min',
+						'lib/underscore'
+					], 
+					bootstrap: [
+						'//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min',
+						'lib/bootstrap.min'
+					], 
+					moment: [
+						'//cdnjs.cloudflare.com/ajax/libs/moment.js/2.1.0/moment.min',
+						'lib/moment'
+					], 
+					rrule: 'lib/rrule',
+					jstz: [
+						'//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min',
+						'lib/jstz-1.0.4'
+					],
+					knockout: [
+						'//cdnjs.cloudflare.com/ajax/libs/knockout/2.3.0/knockout-min',
+						'lib/knockout-2.2.1'
+					], 
+					cryptojs: 'lib/cryptojs-3.1',
+					base64: 'lib/enc-base64-min',
+					hasher: 'lib/hasher',
+					hmac: 'lib/hmac-sha256',
+					komapping: 'lib/ko.mapping',
+					signals: 'lib/signals.min',
+					crossroads: 'lib/crossroads.min',
+					io: [
+						'//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min',
+						'lib/socket.io/socket.io.min'
+					]
+				}, shim: {
+					underscore: {
+						exports: '_'
+					}, bootstrap: {
+						deps: ['jquery'],
+						exports: "$.fn.popover"
+			        }, crossroads: ['signals'],
+			        cryptojs: {
+			        	exports: 'CryptoJS'
+			        }, base64: {
+			        	deps: ['cryptojs'],
+			        	exports: 'CryptoJS'
+			        }, rrule: {
+			        	deps: ['underscore'],
+			        	exports: 'rrule'
+			        }, hmac: {
+			        	deps: ['base64'],
+			        	exports: 'CryptoJS'
+			        }, jstz: {
+			        	exports: 'jstz'
+			        }
+				}, enforceDefine: true
+			});
+			require(['knockout', 'app'], function(ko, app) {
+				app.init();
+				ko.applyBindings(app);
+			});
+		</script>
+	</body>
+</html>

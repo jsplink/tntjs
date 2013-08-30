@@ -1,0 +1,137 @@
+/**
+* Namespace for front-end application views.
+* @module Views
+* @license The MIT License (MIT)
+*   
+*   Copyright (c) 2013 John Sphar
+*   
+*   Permission is hereby granted, free of charge, to any person obtaining a copy
+*   of this software and associated documentation files (the "Software"), to deal
+*   in the Software without restriction, including without limitation the rights
+*   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*   copies of the Software, and to permit persons to whom the Software is
+*   furnished to do so, subject to the following conditions:
+*   
+*   The above copyright notice and this permission notice shall be included in
+*   all copies or substantial portions of the Software.
+*   
+*   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+*   THE SOFTWARE.
+*/
+define(["underscore", "knockout", "tntjs/util", "tntjs/forms", "tntjs/dataserve", "tntjs/comm"], 
+	function(_, ko, Util, Forms, DataServe, Comm) { "use strict";
+		var mod = this,
+			Object = Util.getObject;
+
+		/**
+		* @class View
+		* @belongsTo Views
+		*/
+		var View = Object.makeSubclass({
+			_init: function(args) {
+				var self = this;
+
+				// check for all required properties
+				_.each(["filters", "limit", "order"], function(prop) {
+					if (!prop in args)
+						throw {msg: 'could not find ' + prop + ' in args'}
+				});
+
+				// set properties
+				for (var prop in args) {
+					self[prop] = args[prop];
+				}
+
+				/**
+				* Reset all computed queries.
+				* @method resetQueries
+				*/
+				self.resetQueries = function() {
+					for (var prop in self) {
+						if (DataServe.isComputedQuery(self[prop])) {
+							self[prop].list([]);
+							self[prop].offset(0);
+							self[prop].getMore();
+						}
+					}
+				}
+			}
+		});
+
+		/**
+		* Roommate setup, display, and invitations.
+		* @view Group
+		*/
+		var Group = new View({
+			people: DataServe.serveList({
+				'group': {
+					'member': {
+						filters: [[]],
+						limit: 20,
+						order: ['created', 'DESC']
+					}
+				}
+			}),
+			invites: DataServe.serveList({
+				'group': {
+					'groupInvite': {
+						filters: [[]],
+						limit: 20,
+						order: ['created', 'DESC']
+					}
+				}
+			}),
+			createInvite: Forms.CreateInvite,
+			moveOut: Forms.MoveOut
+		});
+
+		/**
+		* Display the log of actions within the group
+		* @view Activity
+		*/
+		var Activity = new View({
+			logs: DataServe.serveList({
+				'groupLog': {
+					'groupLogItem': {
+						filters: [[]],
+						limit: 20,
+						order: ['created', 'DESC']
+					}
+				}
+			})
+		});
+
+		/**
+		* Room for roommates to chat in
+		* @view ChatRoom
+		*/
+		var ChatRoom = new View({
+			messages: DataServe.serveList({
+				'chatRoom': {
+					'chatMessage': {
+						filters: [[]],
+						limit: 20,
+						order: ['created', 'DESC']
+					}
+				}
+			}),
+			form: Forms.ChatMessage
+		});
+
+		return {
+			'SignIn': new View({'form': Forms.SignIn}),
+			'SignUp': new View({'form': Forms.SignUp}),
+			'ResetPassword': new View({'form': Forms.ResetPassword}),
+			'ForgotPassword': new View({'form': Forms.ForgotPassword}),
+			'ChangePassword': new View({'form': Forms.ChangePassword}),
+			'ChangeEmail': new View({'form': Forms.ChangeEmail })
+		}
+	}
+);
+
+
