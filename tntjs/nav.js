@@ -1,23 +1,29 @@
-define(['jquery', 'underscore', 'knockout', 'hasher', 'crossroads', 'tntjs/settings'],
-function($, _, ko, hasher, crossroads, settings) { "use strict";
+define([
+	'jquery', 
+	'underscore', 
+	'knockout', 
+	'hasher', 
+	'crossroads', 
+	'tntjs/settings'
+], function($, _, ko, hasher, crossroads, settings) { "use strict";
+
+	/**
+	* Navigation configuration as defined in the settings module
+	* @const NAV
+	*/
 	var NAV = settings.navigation,
+
+		/**
+		* Class instance of the navbar
+		* @object navbar
+		*/
 		navbar = undefined,
+
+		/**
+		* Module namespace.
+		* @collection mod
+		*/
 		mod = {};
-
-	mod.hasher = hasher;
-
-	// some configuration tests
-	if (!NAV) console.error('Please define the NAV structure in the settings module.');
-	var testdummy = [];
-	for (var setname in settings.NAV) {
-		for (var a = 0; a < settings.NAV[setname].users.length; a++){
-			 if (testdummy.indexOf(settings.NAV[setname].users[a]) >= 0)
-			 	console.error(settings.NAV[setname].users[a] + ' can only use one navset!');
-			 testdummy.push(settings.NAV[setname].users[a]);
-		}
-	}
-
-	testdummy = null; // destroy reference
 
 	/** @todo deprecate */
 	crossroads.ignoreState = true;
@@ -32,18 +38,23 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 	*/
 	var NavBar = function(args) {
 		var self = this;
+
 		/**
 		* Navigation sets.
 		* @prop {list} sets
 		*/
-		self.sets = [];
-		for (setname in args) {
-			self.sets.push(new NavBarSet({
-				name: setname,
-				items: args[setname].items,
-				users: args[setname].users
+		self.groups = [];
+
+		for (var group in args) {
+			self.groups.push(new NavBarGroup({
+				name: group,
+				root: args[group].root,
+				children: args[group].children,
+				items: args[group].navbar
 			}));
 		}
+
+		self.back = undefined;
 
 		/**
 		* Activate the correct navbar configuration
@@ -51,19 +62,22 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 		* @param {string} aid - the short uri (dashed)
 		*/
 		self.activate = function(aid) {
-			console.debug('activating aid: ' + aid);
-			_.each(self.sets, function(set) {
-				set.activate(aid);
-			});
+			if (!!self.back) {
+
+			} else {
+				console.debug('activating aid: ' + aid);
+				_.each(self.groups, function(group) {
+					group.activate(aid);
+				});
+			}
 		}
 	}
 
-
 	/**
 	* Set of NavBarItems
-	* @class NavBarSet
+	* @class NavBarGroup
 	*/
-	var NavBarSet = function(args) {
+	var NavBarGroup = function(args) {
 		var self = this;
 		self.name = args.name;
 
@@ -77,16 +91,22 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 		}, []);
 
 		/**
-		* List of URI's which trigger this set
+		* List of elements which trigger this set
 		* @prop {list} children
 		*/
-		self.users = args.users;
+		self.children = args.children;
 
 		/**
 		* Whether this set is active or not
 		* @prop {boolean} active
 		*/
 		self.active = ko.observable(false);
+
+		/**
+		* Main page for this navigation group.
+		* @prop {String} root
+		*/
+		self.root = args.root;
 
 		/**
 		* Activate the appropriate navigation items
@@ -97,9 +117,12 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 			_.each(self.items, function(item) {
 				item.activate(id);
 			});
-			if (self.users.indexOf(id) >= 0) {
+			console.debug('checking if child ' + id + ' is in group ' + self.name);
+			if (self.children.indexOf(id) >= 0) {
+				console.debug('true');
 				self.active(true);
 			} else {
+				console.debug('false');
 				self.active(false);
 			}
 		}
@@ -123,7 +146,7 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 		*/
 		self.link = args.link ? args.link : null;
 		if (self.link && $("#" + self.link.slice(2,self.link.length)).length === 0) {
-			console.error("#" + self.link.slice(2,self.link.length) + ' isn\'t in the DOM')
+			console.warn("#" + self.link.slice(2,self.link.length) + ' isn\'t in the DOM')
 		}
 
 		/**
@@ -148,6 +171,9 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 		*/
 		self.activate = function(id) {
 			var a = id.replace('#', '');
+
+
+
 			if (self.link && a === self.link.slice(2,self.link.length)) {
 				self.active(true);
 			} else {
@@ -162,30 +188,10 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 	}
 
 	/**
-	* Navigation bar instance
+	* The single navigation bar instance
 	* @belongsTo Nav
 	*/
 	var navbar = new NavBar(NAV);
-
-	/**
-	* Displays the slidebar for the given main view
-	* @method enableSidebar
-	* @parameter {String} sidebar - Sidebar name to enable
-	*/
-	function enableSidebar(sidebar) {
-		console.log('>>> enabling sidebar: ' + sidebar);
-	
-		if (sidebar != undefined) {
-			$("[id*=sidebar-]").hide();
-			if (sidebar.split('').indexOf('#') > -1){
-				$(sidebar).show();
-			} else {
-				$("#" + sidebar).show();
-			}	
-		} else {
-			console.warn('>>> enabling an undefined sidebar?!');
-		}
-	}
 
 	/**
 	* @method parseHash
@@ -194,25 +200,32 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 	*/
 	function parseHash(newHash, oldHash) {
 		var abc = newHash.split('/');
-		console.info('parsing location: ');
-		abc.forEach(function(i){return i.replace(/#/, '');})
-		console.info(abc);
+		
+		abc.forEach(function(i) {
+			return i.replace(/#/g, '');
+		})
 
-		// 1. Detect a back-query
-		if (abc[0] === 'back' && oldHash !== undefined) {
-			var go_to_hash = oldHash.match(/\?back=([^&]+)/);
-			if (go_to_hash && go_to_hash.length >= 2) {
-				abc[0] = go_to_hash[1];
-				console.info('>>> Discovered oldHash "back" parameter: ' + abc[0]);
+		// parse back queries
+		if (!!oldHash) {
+			var back_hash = oldHash.match(/\?back=#([^&]+)/);
+			console.debug('go_to_hash = ')
+			if (!!back_hash && back_hash.length > 0) {
+				console.debug('Reseting destination to ' + back_hash);
+				abc = [back_hash[1]];
 			}
 		}
 
 		if ((abc.length === 1 && abc[0] === "") || abc === undefined) {
-			mod.hasher.setHash('welcome');
+			hasher.setHash('welcome');
 		} else {
 			// seperate out queries & activate
 			var queries = newHash.match(/\?(.+)/),
-				options = queries && queries.length > 1 ? _.object(queries[1].split('&')) : {};
+				options = !!queries && queries.length > 1 ? queries[1].split('&') : {},
+				options = _.reduce(options, function(m,o) {
+					var opt = o.split('=');
+					m[opt[0]] = opt[1];
+					return m;
+				}, {});
 
 			if (!_.isEmpty(options)) {
 				newHash.replace(/\?.+/, '');
@@ -222,24 +235,29 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 				}
 			}
 
-			console.debug('activating...');
-			console.debug(abc);
-			console.debug(abc.join('-'));
+			console.debug('activating: ' + abc.join('-'));
+			console.debug('with options: (newline)');
+			console.debug(options);
 
-			// activate using ID notation
-			activate(_.compact(abc).join('-'), oldHash, options);
+			_.defer(function(){
+				// activate using ID notation
+				activate(_.compact(abc).join('-'), oldHash, options);
 
-			// send to crossroads for extra parsing
-			crossroads.shouldTypecast = true;
-			console.debug('sending ' + newHash + ' to crossroads...');
-			crossroads.parse(newHash);
+				// send to crossroads for extra parsing
+				crossroads.shouldTypecast = true;
+				console.debug('sending ' + newHash + ' to crossroads...');
+				crossroads.parse(newHash);
+			});
 		}
 
+		/**
+		* Activate a page-state
+		* @param id {String} - State ID (i.e. '/chores/form?id=25')
+		*/
 		function activate(id, oldHash, options) {
 			var id = id.replace('#', '');
 			console.info('>>> Nav activating #' + id)
-			var sidebar = $("#" + id).attr('sidebar'),
-				c = $("#" + id).attr('class'),
+			var c = $("#" + id).attr('class'),
 				nc = c ? c.match(/navclass-([abc])/) : null,
 				nc = nc ? nc[1] : null,
 				ncs = ['a','b','c','d']; // more can be added if required
@@ -261,39 +279,17 @@ function($, _, ko, hasher, crossroads, settings) { "use strict";
 				$("#" + id).find(nc2).first().show();
 				$("#" + id).find(nc2).first().siblings(nc2).hide();
 			}
-			
+
 			// 4. Show the appropriate navbar content
 			navbar.activate(id);
-
-			// 5. Handle standard options
-			if (!!options) {
-				// 1. Override the navbar if options['back'] is set
-				var altback = options['back'];
-				if (!!altback && !!idtonav[altback]) {
-					// 1. Grab the title for the new back window
-					altbackname = idtonav[altback]['title']['name'];
-					// 2. Override the navbar
-					if (altback[0] === '#') {
-						var newbar = navbar();
-						newbar['back'] = {'name': altbackname,'link': altback};
-						navbar(newbar);
-					}
-				} else if (altback !== undefined) {
-					console.warn('>>> Cannot find ' + altback + ' in idtonav');
-				}
-			}
-
-			// 5. Show the sidebar
-			if (sidebar !== undefined) enableSidebar(sidebar);
 		}
 	}
-	
-	mod.hasher.initialized.add(parseHash); //parse initial hash
-	mod.hasher.changed.add(parseHash); //parse hash changes
-	mod.hasher.init(); //start listening for history change
+
+	hasher.initialized.add(parseHash); //parse initial hash
+	hasher.changed.add(parseHash); //parse hash changes
+	hasher.init(); //start listening for history change
 
 	return {
-		navbar: navbar,
-		hasher: mod.hasher
+		navbar: navbar
 	}
 });

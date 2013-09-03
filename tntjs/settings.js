@@ -24,38 +24,135 @@
 *   THE SOFTWARE.
 */
 define({
+
+	/**
+	* Is this app in production?
+	*/
 	PROD: false,
-	COMM_BACKOFF: true, // exponential backoff
+
+	/**
+	* Exponential message back-off. Should usually be on.
+	*/
+	COMM_BACKOFF: true,
 	DEBUG: true,
 	DEV_SERVER_ADDRESS: 'http://localhost:8081', 
 	DEV_NODE_ADDRESS: 'http://localhost:82',
-	APP_CONFIG: {
+
+	/**
+	* Defining entity names and their associated models.js references.
+	* @const APP_IDS
+	*/
+	APP_IDS: {
 		'CurrentUser': 'userAccount',
 		'CurrentGroup': 'group',
 		'CurrentMember': 'member'
-	}, navigation: {
-		'group': {
-			users: ['overview', 'chat-room', 'invite-member' ], 
-			items: [
-				{ name: 'ChatRoom', link: '#/chat-room' },
-				{ name: 'Overview', link: '#/overview'},
-				{ name: 'Manage', menu: [
-					{ name: 'Invite', link: '#/invite-member' },
-				]}
+	}, 
+
+	/**
+	* Navigational settings for the application.
+	*/
+	navigation: {
+
+		/**
+		* As seen by first-time users.
+		*/
+		guest: {
+			'root': 'welcome',
+			'children': [
+				'welcome',
+				'sign-in',
+				'sign-up', 
+				'forgot-password',
+				'reset-password' 
+			], 
+			'navbar': [
+				{
+					name: 'Welcome',
+					link: '#/welcome',
+					pos: 'left'
+				}, {
+					name: 'Sign Up',
+					link: '#/sign-up',
+					pos: 'right'
+				}, { 
+					name: 'Sign In',
+					link: '#/sign-in',
+					pos: 'right'
+				}
 			]
-		}, 'entryway': {
-			users: [ 'entryway', 'entryway-groups', 'entryway-group-invites', 'group-form'], //'join-group'
-			items: [
-				{ name: 'Entryway', link: '#/entryway' },
-				{ name: 'Create a Group', link: '#/group-form' },
-				//{ name: 'Join a Group', link: '#/join-group' }
+		},
+
+		/**
+		* As seen by users.
+		*/
+		user: {
+			'root': 'entryway',
+			'children': [ 
+				'entryway', 
+				'entryway-groups', 
+				'entryway-group-invites', 
+				'group-form',
+				'join-home'
+			], 
+			'navbar': [
+				{
+					name: 'Entryway',
+					link: '#/entryway',
+					pos: 'left'
+				}, { 
+					name: 'Create a Group',
+					link: '#/group-form',
+					pos: 'left'
+				}, { 
+					name: 'Join a Group',
+					link: '#/join-group',
+					pos: 'left'
+				}
 			]
-		}, 'guest': {
-			users: ['welcome', 'sign-in', 'sign-up', '#forgot-password', '#reset-password' ],
-			items: [
-				{ name: 'Welcome', link: '#/welcome' }, 
-				{ name: 'Sign Up', link: '#/sign-up' },
-				{ name: 'Sign In', link: '#/sign-in' }
+		}, 
+
+		/**
+		* As seen by members. 
+		*/
+		member: {
+			'root': 'overview',
+			'children': [
+				'overview', 
+				'chat-room',
+				'people',
+				'move-out',
+				'invite-member'
+			], 
+			'navbar': [
+				{
+					name: 'Overview', 
+					link: '#/overview'
+				}, {
+					name: 'Discuss', 
+					menu: [
+						{ 
+							'name': 'Message Thread',
+							'link': '#/chat-room' 
+						}
+					]
+				}, { 
+					name: 'Manage', 
+					menu: [
+						{
+							'name': 'Invite Member',
+							'link': '#/invite-member'
+						}, { 
+							'name': 'Group Settings', 
+							'link': '#/change-nickname' 
+						}, { 
+							'name': 'Leave Group', 
+							'link': '#/move-out'
+						}
+					]
+				}, {
+					name: 'Entryway', 
+					link: '#/leave-group'
+				}
 			]
 		}
 	}
