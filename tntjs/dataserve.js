@@ -213,7 +213,7 @@ function($, crossroads, _, ko, Util, Comm, Settings, Models) { "use strict";
                 var pkey = self.list().length > 0 ? self.list()[0]._pkey : undefined,
                     updating_keys = undefined,
                     updates = undefined,
-                    updating_object = undefined,
+                    updating_object = undefined;
 
                 // 1. Check if we're updating / adding a list of objects
                 if (l instanceof Array) {
@@ -226,7 +226,7 @@ function($, crossroads, _, ko, Util, Comm, Settings, Models) { "use strict";
                             return i[pkey] in updating;
                         });
                         // 3. Update the objects
-                        _.each(updated, function(ob) {
+                        _.each(updates, function(ob) {
                             ob.update(l[updating_keys.indexOf[ob[pkey]]]);
                         });
                     } else {
