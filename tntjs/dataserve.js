@@ -211,21 +211,51 @@ function($, crossroads, _, ko, Util, Comm, Settings, Models) { "use strict";
             */
             self.update = function(l) {
                 var pkey = self.list().length > 0 ? self.list()[0]._pkey : undefined,
-                    updating = pkey ? _.pluck(l, '_pkey') : undefined,
-                    updates = undefined;
-                if (pkey) {
-                    updates = _.chain(self.list()).where(self.list(), function(i) {
-                        return i[pkey] in updating;
-                    }).each(function(i) {
-                        i.update(l[updating.indexOf(i[pkey])])
-                    });
+                    updating_keys = undefined,
+                    updates = undefined,
+                    updating_object = undefined,
+
+                // 1. Check if we're updating / adding a list of objects
+                if (l instanceof Array) {
+                    // 1. Check if we're updating objects
+                    if (!!pkey) {
+                        // 1. Set list of keys we're updating
+                        updating_keys = pkey ? _.pluck(l, '_pkey') : undefined;
+                        // 2. Set list of objects to update
+                        updates = _.where(self.list(), function(i) {
+                            return i[pkey] in updating;
+                        });
+                        // 3. Update the objects
+                        _.each(updated, function(ob) {
+                            ob.update(l[updating_keys.indexOf[ob[pkey]]]);
+                        });
+                    } else {
+                        // 1. Otherwise we're just creating a new list of objects
+                        _.each(l, function(ob) {
+                            self.list.push(new Models[self.modelName](ob));
+                        });
+                    }
+                // 2. Otherwise we're just adding/updating one object
                 } else {
-                    _.each(l, function(ob) {
-                        if (Models[self.modelName] === undefined)
-                            console.warn('could not find ' + model + ' in Models');
-                        self.list.push(new Models[self.modelName](ob));
-                    });
+                    // 1. Check if there's a primary key defined
+                    if (!!pkey) {
+                        // 1. Grab the object to update
+                        updating_object = _.find(self.list(), function(i) {
+                            return i[pkey] == l[pkey];  
+                        });
+
+                        if (!!updating_object) {
+                            // update if found
+                            updating_object.update(l);
+                        } else {
+                            // add if not
+                            self.list.push(new Models[self.modelName](l));
+                        }
+                    } else {
+                        self.list.push(new Models[self.modelName](l));
+                    }
                 }
+                // 3. Notify all subscribers
                 self.list.notifySubscribers(self.list());
             };
 
