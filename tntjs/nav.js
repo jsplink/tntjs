@@ -54,22 +54,16 @@ define([
 			}));
 		}
 
-		self.back = undefined;
-
 		/**
 		* Activate the correct navbar configuration
 		* @method activate
 		* @param {string} aid - the short uri (dashed)
 		*/
 		self.activate = function(aid) {
-			if (!!self.back) {
-
-			} else {
-				console.debug('activating aid: ' + aid);
-				_.each(self.groups, function(group) {
-					group.activate(aid);
-				});
-			}
+			console.debug('activating aid: ' + aid);
+			_.each(self.groups, function(group) {
+				group.activate(aid);
+			});
 		}
 	}
 
