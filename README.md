@@ -64,8 +64,11 @@ tntjs
 * socket.io
 
     Group-based messaging
-    
-## dataserve.serveList
+
+## dataserve.js
+It is absolutely critical for you to implement data query whitelisting on your back-end. Define and implement checks on EXACTLY what you are expecting. 
+
+### dataserve.serveList
 The serveList method creates an expectation for a list of named objects. Objects are identified with a viewName and a typeName, along with optional number identifiers.
 
 These number identifiers allow you to call for object-specific data lists from your database.
@@ -136,7 +139,7 @@ These number identifiers allow you to call for object-specific data lists from y
 
 **Step Six** Your view is automatically updated and thus the UI changes as expected.
 
-## dataserve.serveObject
+### dataserve.serveObject
 The serveObject method creates an expectation for an object. 
 
     dataserve.serveObject('***objectName***<numberID>*** }');
