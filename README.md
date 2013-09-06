@@ -71,16 +71,16 @@ The serveList method creates an expectation for a list of named objects. Objects
 These number identifiers allow you to call for object-specific data lists from your database.
 
     dataserve.serveList({
-    	'***viewName***<***numberID***>': { // numberID optional
-    		'***typeName***': {
-    			offset: ***number***,
-    			limit: ***number***,
+    	'viewName<numberID>': { // numberID optional
+    		'typeName': {
+    			offset: number,
+    			limit: number,
     			filters: [
-    				***[***
-    					'***propertyName***<***numberID***>', 
-    					'{ ***<*** | ***>*** | ***==*** | ***<=*** | ***>=*** | ***!=*** }',
-    					'***propertyValue***'
-    				***]*** ), [ ... ]
+    				[
+    					'propertyName', 
+    					( '<' | '>' | '==' | '<=' | '>=' | '!=' ),
+    					'propertyValue'
+    				] ), [ ... ]
     			]
     		}
     	}
@@ -88,11 +88,14 @@ These number identifiers allow you to call for object-specific data lists from y
 
 An example...
 
-    dataserve.serveList({
+**Step One** Within your View (views.js)
+
+    var groups = dataserve.serveList({
     	'groupChooser': { 
     		'group': { 
     			offset: 0,
     			limit: 25,
+    			order: ["created", "ASC"],
     			filters: [
     				['category', '==', 'soccer]
     			]
@@ -100,7 +103,17 @@ An example...
     	}
     });
     
-The server returns...
+**Step Two** DataServe registers this data and queries the Comm module which in turn sends to your back-end...
+
+    jsonp:jQuery19105425903734285384_1378496107370
+    action:get_list
+    arg0:{"config":{"group_chooser":{"group":{"offset":0,"limit":25,"order":["created","ASC"]}}}}
+    arg1:undefined
+    quuid:923e1329-8049-4674-84f0-5eefb54037cc
+    time:1378496254498
+    _:1378496107383
+    
+**Step Three** Your server shall return the following...
 
     {
         "body": {
@@ -119,9 +132,11 @@ The server returns...
         "signature": "NmY4MzY5MDE4NzU2ZDcxODA1OGE2MzUyNGZjNTYyNjdjYzRiMzgxNjAzN2NjMTk0Yjg1NjUzNjQ0\nYjhhYjgyMg=="
     }
     
-The comm module uses sha-256 hmac message validation to validate the message per tokens stored in the comm module.
+**Step Four** The comm module (1) validates the hmac signature via comm.tokens, (2) updates the receivedMsg array
 
-Your view automatically updates.
+**Step Five** The dataserve is notified of the received message and updates the list in the registry.
+
+**Step Six** Your view is automatically updated and thus the UI changes as expected.
 
 ## dataserve.serveObject
 The serveObject method creates an expectation for an object. 
