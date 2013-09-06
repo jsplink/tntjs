@@ -86,9 +86,7 @@ These number identifiers allow you to call for object-specific data lists from y
     	}
     });
 
-An example...
-
-**Step One** Within your View (views.js)
+**Step One** Within your View (views.js) define the list you wish to show.
 
     var groups = dataserve.serveList({
     	'groupChooser': { 
@@ -103,7 +101,7 @@ An example...
     	}
     });
     
-**Step Two** DataServe registers this data and queries the Comm module which in turn sends to your back-end...
+**Step Two** DataServe registers this data and queries the Comm module which in turn sends to your back-end.
 
     jsonp:jQuery19105425903734285384_1378496107370
     action:get_list
@@ -113,7 +111,7 @@ An example...
     time:1378496254498
     _:1378496107383
     
-**Step Three** Your server shall return the following...
+**Step Three** Your server shall respond with the following.
 
     {
         "body": {
@@ -144,9 +142,9 @@ The serveObject method creates an expectation for an object.
     dataserve.serveObject('***objectName***<numberID>*** }');
 
 ## Disclaimer
-Having been gutted out of a project w/ lots of sloc less than a week ago, this is merely a conceptual (not a working) model of TNTjs: down-right simple and glad for it.
+Having been gutted out of a project w/ lots of sloc less than a week ago, this is merely a beginning for tntjs: down-right simple and glad for it.
 
-Some of these components have already been refactored / updated, updates which are not apart of my daily or weekly workflow as of right now. Expect tests and a how-to sometime in the near future.
+Please add issues instead of contributing. Chances are good I've already implemented a solution but haven't updated this repository.
 
 ## License
 The MIT License (MIT)
