@@ -1,7 +1,7 @@
 tntjs
 ===
 ## A single-load web application framework.
-"One code-base, all devices." Mirroring the fact that it's all the same web.
+"One code-base, all devices." Because hey, it's all the same web.
 
 "Use what works best." Adopting libraries with clean design.
 
@@ -118,6 +118,10 @@ The server returns...
         "timestamp": "2013-09-06T19:37:34.814917", 
         "signature": "NmY4MzY5MDE4NzU2ZDcxODA1OGE2MzUyNGZjNTYyNjdjYzRiMzgxNjAzN2NjMTk0Yjg1NjUzNjQ0\nYjhhYjgyMg=="
     }
+    
+The comm module uses sha-256 hmac message validation to validate the message per tokens stored in the comm module.
+
+Your view automatically updates.
 
 ## dataserve.serveObject
 The serveObject method creates an expectation for an object. 
