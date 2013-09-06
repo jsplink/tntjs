@@ -1,4 +1,4 @@
-TNT.js
+tntjs
 ===
 ## A single-load web application framework.
 "One code-base, all devices." Mirroring the fact that it's all the same web.
@@ -86,6 +86,7 @@ These number identifiers allow you to call for object-specific data lists from y
     	}
     });
 
+An example...
 
     dataserve.serveList({
     	'groupChooser': { 
@@ -98,6 +99,25 @@ These number identifiers allow you to call for object-specific data lists from y
     		}
     	}
     });
+    
+The server returns...
+
+    {
+        "body": {
+            "status": 1, 
+            "config": {
+                "groupChooser": {
+                    "group": [{
+                        "name": "Soccer Group",
+                        "groupID": 24
+                    }, { ... }]
+                }
+            }, 
+            "quuid": "923e1329-8049-4674-84f0-5eefb54037cc"
+        }, 
+        "timestamp": "2013-09-06T19:37:34.814917", 
+        "signature": "NmY4MzY5MDE4NzU2ZDcxODA1OGE2MzUyNGZjNTYyNjdjYzRiMzgxNjAzN2NjMTk0Yjg1NjUzNjQ0\nYjhhYjgyMg=="
+    }
 
 ## dataserve.serveObject
 The serveObject method creates an expectation for an object. 
