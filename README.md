@@ -1,9 +1,9 @@
 tntjs
 ===
-## A single-load web application framework.
+### A single-load web application framework.
 "One code-base, all devices." Because hey, it's all the same web.
 
-"Use what works best." Adopting libraries with clean design.
+"Use what works best." Uses libraries with clean API's.
 
 "Freeze! Drop it, punk." Cleanliness means dropping everything we can.
 
@@ -64,9 +64,53 @@ tntjs
 * socket.io
 
     Group-based messaging
+    
+## models.js
+
+### Ob
+Short for 'Object', this is the base class for all model definition.
+
+    /**
+    * @class <modelNameHere>
+    * @desc <modelDescriptionHere>
+    * @todo convert property declarations into an argument object
+    */
+    var <modelName> = Ob.makeSubclass({
+    	_init: function(args) {
+    		var self = this;
+    		self._class = '<';
+    		self._pkey = '<identifyingPropertyName>';
+    		Ob.prototype._init(self, args, [ // (T) this will soon become an argument object
+    			[
+    			    ( "Number" | "String" | "moment" | "epoch" | "Date" | "Array" ) , 
+    			    "<propertyValue>", 
+    			    <requiredBoolean>
+    			], [ ... ]
+    		]);
+    	}
+    })
+    
+An example.
+
+    /**
+    * @class group
+    * @desc Used for the CurrentGroup property
+    */
+    var group = Ob.makeSubclass({
+    	_init: function(args) {
+    		var self = this;
+    		self._class = 'group';
+    		self._pkey = 'groupId';
+    		Ob.prototype._init(self, args, [
+    			["Number", "groupId", false],
+    			["String", "groupToken", true],
+    			["String", "groupStyleType", true],
+    		]);
+    	}
+    })
 
 ## dataserve.js
-It is absolutely critical for you to implement data query whitelisting on your back-end. Define and implement checks on EXACTLY what you are expecting. 
+It is absolutely critical for you to implement data query whitelisting on your back-end. Define and implement checks on EXACTLY what you are expecting. Unless of course you want people making your database their beezy.
 
 ### dataserve.serveList
 The serveList method creates an expectation for a list of named objects. Objects are identified with a viewName and a typeName, along with optional number identifiers.
