@@ -1,16 +1,17 @@
 tntjs
 ===
+
 ### A single-load web application framework.
-"One code-base, all devices." Because hey, it's all the same web.
+"One code-base, all devices." because it's all the same web
 
-"Use what works best." Uses libraries with clean API's.
+"This is so simple it's stupid." because **that's good design**
 
-"Freeze! Drop it, punk." Cleanliness means dropping everything we can.
+"Omg implement web workers already." omg contribute
 
 ## Project Modules
 * app.js
 
-    Exposes your forms & views. Also listens to the data registry and updates identify-based configurations (i.e. user changes). Views are auto-updated once bound to the registry.
+    Exposes your forms & views. Also listens to the data registry and updates identify-based configurations (i.e. user or group changes). Views are auto-updated once bound to the registry.
 * dataserve.js
 
     Listens to the Comm module and updates the registry per incoming object / list modifications.
@@ -63,7 +64,7 @@ tntjs
     Keeping those routes flexible since 2011
 * socket.io
 
-    Group-based messaging
+    The node messaging client.
     
 ## models.js
 
@@ -78,19 +79,19 @@ Short for 'Object', this is the base class for all model definition.
     var <modelName> = Ob.makeSubclass({
     	_init: function(args) {
     		var self = this;
-    		self._class = '<';
+    		self._class = '<modelName>';
     		self._pkey = '<identifyingPropertyName>';
-    		Ob.prototype._init(self, args, [ // (T) this will soon become an argument object
+    		Ob.prototype._init(self, args, [
     			[
-    			    ( "Number" | "String" | "moment" | "epoch" | "Date" | "Array" ) , 
+    			    < "Number" | "String" | "moment" | "epoch" | "Date" | "Array" >, 
     			    "<propertyValue>", 
     			    <requiredBoolean>
     			], [ ... ]
     		]);
     	}
-    })
+    });
     
-An example.
+Perhaps, an example.
 
     /**
     * @class group
@@ -110,30 +111,30 @@ An example.
     })
 
 ## dataserve.js
-It is absolutely critical for you to implement data query whitelisting on your back-end. Define and implement checks on EXACTLY what you are expecting. Unless of course you want people making your database their beezy.
+It is absolutely critical for everyone to implement data query whitelisting for any request hitting the database. Define and implement checks on exactly what you are expecting unless of course you want malicious activity on your system. Research? Hey, that's a pretty good idea!
 
 ### dataserve.serveList
-The serveList method creates an expectation for a list of named objects. Objects are identified with a viewName and a typeName, along with optional number identifiers.
+The serveList method creates an expectation for a list of named objects. Objects are identified with a viewName and a typeName (i.e. data type name, found under models.js), along with number identifiers if there are any.
 
 These number identifiers allow you to call for object-specific data lists from your database.
 
     dataserve.serveList({
-    	'viewName<numberID>': { // numberID optional
-    		'typeName': {
-    			offset: number,
-    			limit: number,
+    	'<viewName> { <NumberID> { <viewName> { <NumberID> ... } } }': { // keep adding <viewName><numberID> as the list becomes more and more detailed.
+    		'<typeName>': {
+    			offset: <number>,
+    			limit: <number>,
     			filters: [
     				[
-    					'propertyName', 
-    					( '<' | '>' | '==' | '<=' | '>=' | '!=' ),
-    					'propertyValue'
+    					'<propertyName>', 
+    					< '<' | '>' | '==' | '<=' | '>=' | '!=' >,
+    					'<propertyValue>'
     				] ), [ ... ]
     			]
     		}
     	}
     });
 
-**Step One** Within your View (views.js) define the list you wish to show.
+**Step One** Within your View (views.js) make calls to the dataserve as you wish.
 
     var groups = dataserve.serveList({
     	'groupChooser': { 
@@ -147,7 +148,28 @@ These number identifiers allow you to call for object-specific data lists from y
     		}
     	}
     });
-    
+    var golfGroup = dataserve.serveList({
+        'groupChooserGroup48': {
+            'member': {
+                offset: 0,
+                limit: 25,
+                order: ["joined", "ASC"],
+                filters: [
+                    ['']
+                ]
+            }
+        }
+    });
+    var briansInterests = dataserve.serveList({
+        'groupChooserGroup48member10': {
+            'interest': {
+                offset: 0,
+                limit: 25,
+                order: ["added", "ASC"],
+                filters: [[]]
+            }
+        }
+    });
 **Step Two** DataServe registers this data and queries the Comm module which in turn sends to your back-end.
 
     jsonp:jQuery19105425903734285384_1378496107370
@@ -158,7 +180,7 @@ These number identifiers allow you to call for object-specific data lists from y
     time:1378496254498
     _:1378496107383
     
-**Step Three** Your server shall respond with the following.
+**Step Three** Your server shall respond with the following (use whatever your back-end preference is)..
 
     {
         "body": {
@@ -177,21 +199,55 @@ These number identifiers allow you to call for object-specific data lists from y
         "signature": "NmY4MzY5MDE4NzU2ZDcxODA1OGE2MzUyNGZjNTYyNjdjYzRiMzgxNjAzN2NjMTk0Yjg1NjUzNjQ0\nYjhhYjgyMg=="
     }
     
-**Step Four** The comm module (1) validates the hmac signature via comm.tokens, (2) updates the receivedMsg array
+**Step Four** The comm module (1) validates the hmac signature via comm.tokens and (2) updates the receivedMsg array
 
 **Step Five** The dataserve is notified of the received message and updates the list in the registry.
 
-**Step Six** Your view is automatically updated and thus the UI changes as expected.
+**Step Six** Your views are automatically updated and the UI follows.
 
 ### dataserve.serveObject
 The serveObject method creates an expectation for an object. 
 
-    dataserve.serveObject('***objectName***<numberID>*** }');
+    dataserve.serveObject('<objectName><numberID>');
+    
+## nav.js
+Looks at settings.navigation and implements twitter's bootstrap. Also determines navigational hierarchy with the classes `.navigable-[a-z]`, where each latter letter shall be the child of its parent. In other words, `.navigable-[a-z]` designates the navigational hierarchy.
+
+Okay, so let's say you had a div called `#food` and a child called `#cheese`.
+
+    <nav id='main-navigation'>
+        <a href='#/cheese'>Cheese</a>
+        <a href='#/cream'>Cream</a>
+    </nav>
+    <div id='food' class='navigable-a'>
+        <div id='cheese' class='navigable-b'>
+            <ul data-bind='foreach: milkProducts.cheese'></ul>
+        </div>
+        <div id='cream' class='navigable-b'>
+            <ul data-bind='foreach: milkProducts.cream'></ul>
+        </div>
+    </div>
+    
+When the `#/cheese` link is clicked, all siblings of `#cheese` with the same `.navigable-b` class are hidden, and all `.navigable-[a-z]` ancestors / parents of `#/cream`--in this case `#food.navigable-a`--are shown.
+
+## Credits
+
+* JQuery (@jquery) 
+* Underscore (@jashkenas)
+* Twitter Bootstrap (@twbs)
+* Moment.js (@moment)
+* KnockoutJS (@knockout)
+* CryptoJS
+* Hasher (@millermedeiros)
+* Signals (@millermedeiros)
+* Crossroads (@millermedeiros)
+* Signals (@millermedeiros)
+* Socket.io (@LearnBoost)
 
 ## Disclaimer
-Having been gutted out of a project w/ lots of sloc less than a week ago, this is merely a beginning for tntjs: down-right simple and glad for it.
+Having been gutted out of a project w/ lots of sloc less than a week ago, this is merely a beginning.
 
-Please add issues instead of contributing. Chances are good I've already implemented a solution but haven't updated this repository.
+Fork away! Issue postings welcome.
 
 ## License
 The MIT License (MIT)
