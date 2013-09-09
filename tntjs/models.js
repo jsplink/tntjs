@@ -81,19 +81,20 @@ define(["underscore", "knockout", "tntjs/dataserve", "tntjs/comm", "tntjs/util"]
 			}
 			
 			// map the properties into this object
+			// (Q) wtf moment() tzoffset being subtracted?
 			_.map(args, function(val,key) {
 				var idx = self._props.indexOf(key);
 				if (idx >= 0) {
 					var type = constructors[idx][0], // type
 						prop = constructors[idx][1], // prop
 						observe = constructors[idx][2]; // observable
-					if (type === 'Array') { // (T) make recursive
+					if (type === 'Array') { // (T) make recursive (Q)
 						if (observe === true) {
 							self[prop] = ko.observable(val);
 						} else {
 							self[prop] = val;
 						}
-					} else if (type === 'moment' && val != null) {
+					} else if (type === 'moment' && val != null) { // DEPRECATED
 						var tzoff = new Date().getTimezoneOffset();
 						if (observe === true) {
 							self[prop] = ko.observable(moment(val).subtract('minutes', tzoff));
@@ -203,7 +204,7 @@ define(["underscore", "knockout", "tntjs/dataserve", "tntjs/comm", "tntjs/util"]
 			self._references = {};
 
 			Model.prototype._init(self, args, [
-				["Number", "groupId", false]
+				["Number", "groupId", false],
 				["String", "groupStyleType", false],
 				["String", "description", false],
 				["Array", "pictureUrls", true],
@@ -262,7 +263,7 @@ define(["underscore", "knockout", "tntjs/dataserve", "tntjs/comm", "tntjs/util"]
 				["String", "groupNickname", true],
 				["Array",  "preferTaskDays", true],
 				["String", "contactName", true],
-				["moment", "birthday", true], // DOES THIS WORK?
+				["moment", "birthday", true],
 				["String", "picture", true],
 				["String", "memberCreated", false],
 				["String", "mobile", true],
