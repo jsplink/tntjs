@@ -245,7 +245,9 @@ When the `#/cheese` link is clicked, all siblings of `#cheese` with the same `.n
 * Socket.io (@LearnBoost)
 
 ## Disclaimer
-Having been gutted out of a project w/ lots of sloc less than a week ago, this is merely a beginning.
+Having been gutted out of a project w/ lots of sloc less than a few weeks ago, this is merely a beginning.
+
+I started my computing career 10 years back as a designer. Because of this, contributions / refactors by math-based coders are greatly welcomed!
 
 Fork away! Issue postings welcome.
 
