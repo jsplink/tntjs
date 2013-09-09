@@ -1,0 +1,20 @@
+{ "name": "tntjs",
+  "description": "a one-load client-side framework",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url":  "git://github.com/obimod/tntjs.git" },
+  "dependencies": {
+    "jquery": "1.9.x",
+    "underscore": "1.4.x",
+    "bootstrap": "3.0.0",
+    "moment": "2.1.0",
+    "knockout": "2.2.1",
+    "cryptojs": "3.1.0",
+    "crossroads": "0.12.0",
+    "socket.io": "0.9.16",
+    "moment": "2.1.0",
+    "underscore": "1.1.x"
+  },
+  "private": false
+}
