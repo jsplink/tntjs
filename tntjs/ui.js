@@ -1,3 +1,7 @@
+/**
+* General user interface controllers.
+* @license GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+*/
 define(['jquery', 'bootstrap', 'moment', 'underscore', 'crossroads', 'knockout', 'tntjs/util'],
 function($, bootstrap, moment, _, crossroads, ko, Util) { "use strict";
 	// extend Object with makeSubclass via Util

@@ -1,33 +1,113 @@
 TNT.js
 ===
 ## A single-load web application framework.
----
-"One code-base, all devices."
+"One code-base, all devices." Mirroring the fact that it's all the same web.
+
+"Use what works best." Adopting libraries with clean design.
+
+"Freeze! Drop it, punk." Cleanliness means dropping everything we can.
 
 ## Project Modules
-* App
-    - Exposes your forms & views. Also listens to AppConfig changes & responds by updating the view data of your choice.
-* Dataserve
-    - Controls the flow of data between the comm module with a subscribable list/object data registry.
-* Comm
-    - One module, standardized communication. Handles all incoming and outgoing messages.
-* Nav
-    - Configuration-based navigation controller.
-* Views
-    - Define your views with simple, classy inheritance.
-* Models
-    - Data-type enforcement, subscribable properties, classy inheritance.
-* Forms
-    - Where our harvest-worthy thoughts go. Standardized submission, cancellation, validation via classy inheritance.
-* Settings
-    - App-wide settings, including your navigation structure.
-* Util
-    - A place for those useful miscellaneous tools.
-* UI
-    - Extra user-interface controllers (i.e. $(".adate") fromNow updates)
+* app.js
+
+    Exposes your forms & views. Also listens to the data registry and updates identify-based configurations (i.e. user changes). Views are auto-updated once bound to the registry.
+* dataserve.js
+
+    Listens to the Comm module and updates the registry per incoming object / list modifications.
+* comm.js
+
+    First-level dispatcher. Exposes a queue of incoming messages. Holds and process a queue of the outgoing. Talks to the user via ui.sysComm.
+* nav.js
+
+    Configuration-based navigation controller. Configuration defined in settings.js.
+* views.js
+
+    Provides a view object to extend.
+* models.js
+
+    Provides a model object to extend. Data-type enforcement, subscribable properties, prototypal inheritance.
+* forms.js
+
+    Provides a form object to extend. Namespace for defining models for user input.
+* settings.js
+
+    App-wide settings.
+* util.js
+
+    A place for those generally useful tools.
+* ui.js
+
+    Extra user-interface controllers (i.e. $(".adate") fromNow updates)
 
 ## Dependencies
-Why rebuild the wheel? TNT.js draws from outstanding projects including: JQuery, Underscore, Twitter Bootstrap, Moment.js, KnockoutJS, CryptoJS, Hasher, Signals, Crossroads, Socket.IO
+* jquery.js
+
+    API for the DOM
+* underscore.js
+
+    Utility methods for the JS
+* bootstrap.js
+
+    Standardization of UI components
+* moment.js
+
+    A time module which doesn't suck
+* knockout.js
+
+    Standardization of Data <> DOM interactions
+* crypto.js
+
+    For a (thin) layer of HMAC message signatures
+* crossroads.js
+
+    Keeping those routes flexible since 2011
+* socket.io
+
+    Group-based messaging
+    
+## dataserve.serveList
+The serveList method creates an expectation for a list of named objects. Objects are identified with a viewName and a typeName, along with optional number identifiers.
+
+These number identifiers allow you to call for object-specific data lists from your database.
+
+    dataserve.serveList({
+    	'***viewName***<***numberID***>': { // numberID optional
+    		'***typeName***': {
+    			offset: ***number***,
+    			limit: ***number***,
+    			filters: [
+    				***[***
+    					'***propertyName***<***numberID***>', 
+    					'{ ***<*** | ***>*** | ***==*** | ***<=*** | ***>=*** | ***!=*** }',
+    					'***propertyValue***'
+    				***]*** ), [ ... ]
+    			]
+    		}
+    	}
+    });
+
+
+    dataserve.serveList({
+    	'groupChooser': { 
+    		'group': { 
+    			offset: 0,
+    			limit: 25,
+    			filters: [
+    				['category', '==', 'soccer]
+    			]
+    		}
+    	}
+    });
+
+## dataserve.serveObject
+The serveObject method creates an expectation for an object. 
+
+    dataserve.serveObject('***objectName***<numberID>*** }');
+
+## Disclaimer
+Having been gutted out of a project w/ lots of sloc less than a week ago, this is merely a conceptual (not a working) model of TNTjs: down-right simple and glad for it.
+
+Some of these components have already been refactored / updated, updates which are not apart of my daily or weekly workflow as of right now. Expect tests and a how-to sometime in the near future.
 
 ## License
 The MIT License (MIT)
