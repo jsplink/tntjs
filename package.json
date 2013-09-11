@@ -10,7 +10,7 @@
     "bootstrap": "3.0.0",
     "moment": "2.1.0",
     "knockout": "2.2.1",
-    "cryptojs": "3.1.0",
+    "cryptojs": "2.5.3",
     "crossroads": "0.12.0",
     "socket.io": "0.9.16",
     "moment": "2.1.0",
