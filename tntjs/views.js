@@ -44,7 +44,7 @@ define(["underscore", "knockout", "tntjs/util", "tntjs/forms", "tntjs/dataserve"
 		});
 
 		/**
-		* Roommate setup, display, and invitations.
+		* Member setup, display, and invitations.
 		* @view Group
 		*/
 		var Group = new View({
@@ -87,7 +87,7 @@ define(["underscore", "knockout", "tntjs/util", "tntjs/forms", "tntjs/dataserve"
 		});
 
 		/**
-		* Room for roommates to chat in
+		* Room for members to chat in
 		* @view ChatRoom
 		*/
 		var ChatRoom = new View({
