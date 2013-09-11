@@ -1,14 +1,14 @@
 tntjs
 ===
 
-### A single page load web application framework.
+Simple, single-page scaffolding for developing cross-device web applications. By combining the flexibility of JavaScript with the power of rapidly evolving web standards we can greatly reduce the cost of software product development.
 
-`build status: failing`, mostly because there is no `build` yet. This is rather a modular structure for your client-facing projects.
+`build status: failing` (eta this weekend)
 
 ## Project Modules
-* **app**.js - Exposes your **views** to your DOM (i.e. `data-bind="with: app.views"`). Also listens to the data registry and updates identify-based configurations (i.e. user or group changes). Views are auto-updated once bound to the registry.
-* **dataserve**.js - Listens to the **comm** module and updates the registry per incoming object / list modifications. Queries the **models** module to instantiate objects. 
-* **comm**.js - Dispatches incoming and outgoing messages. Exposes a queue of incoming messages. Holds and process a queue of the outgoing. Talks to the user via **ui**.sysComm.
+* **tnt**.js - Exposes your **views** to your DOM (i.e. `data-bind="with: tnt.views"`). Also listens to the data registry and updates identity-based configurations (i.e. user or group changes). Views are auto-updated once bound to the registry.
+* **dataserve**.js - Listens to the **comm** module and updates the registry per incoming object / list modifications. Queries the **models** module to instantiate objects.
+* **comm**.js - Dispatches incoming and outgoing messages. Exposes a queue of incoming messages. Holds and one-by-one processes a queue of outgoing messages. Talks to the user via **ui**.sysComm.
 * **nav**.js - Configuration-based navigation controller. Navbar configuration found in **settings**.
 * **views**.js - Provides a view object to extend. Returns all of your **views** (including **forms**)
 * **models**.js - Provides a model object to extend. Data-type enforcement, subscribable properties, prototypal inheritance.
@@ -17,7 +17,12 @@ tntjs
 * **util**.js - A place for those generally useful tools & where we implement Subclassing.
 * **ui**.js - Extra user-interface controllers (i.e. $(".adate") fromNow updates)
 
-## Dependencies (included under the lib directory)
+You should only need to edit **settings**, **models** (what will your server send?), **views** (what will your users see?), and **forms** (what will your users tell?).
+
+## Dependencies
+
+The npm registry has not upgraded a couple of the packages (cryptojs 3+, twitter-bootstrap 3.0), so `npm install` won't work. Please use the `/lib` directory or your own forks of those projects.
+
 * jquery.js - API for the DOM
 * underscore.js - Standardization of data algorithms
 * bootstrap.js -  (3.0.x) Standardization of UI components
@@ -27,7 +32,11 @@ tntjs
 * socket.io - For spinning up node clients (group-based communication)
 * moment.js - A time module (T) deprecate this dependency
 
-## models.js
+This project will in time adopt Apache Cordova.
+
+# How-To
+
+## models.js `require("models");`
 Used by the **dataserve** module to validate & instantiate information passed in via the **comm** module.
 
 ### Ob
@@ -74,12 +83,12 @@ Perhaps, an example...
     
 These **models** define what your server's client-bound data should look like. Server-side code is beyond the scope of this project.
 
-## dataserve.js
+## dataserve.js `require("dataserve");`
 Connects your **comm** to your **views**. Initiates objects via **models**. Serves lists and serves objects.
 
 Please be sure to implement inbound dataquery whitelisting (see the owasp article on SQL Injection: https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet).
 
-### dataserve.serveList
+### `dataserve.serveList({...});`
 The serveList method creates an expectation (or, perhaps, a 'promise') for a list of named objects. Objects are identified with a viewName and a typeName (i.e. data type name, created within **models**), along with number identifiers if there are any.
 
 These number identifiers allow you to call for object-specific data lists from your database.
@@ -177,36 +186,202 @@ If they do not exist in **models**, an error is thrown.
 
 **Step Six** Your **views** are automatically updated and the user's interface follows (thanks to data-binding).
 
-### dataserve.serveObject
+### `dataserve.serveObject(...);`
 The serveObject method creates an expectation for an object. 
 
     dataserve.serveObject('<objectName><numberID>');
     
-## nav.js
+## nav.js `require("nav");`
 Looks at **settings**.navigation and implements twitter's bootstrap. Also determines navigational hierarchy with the classes `.navigable-[a-z]`, where each latter letter shall be a child of its parent. In other words, `.navigable-[a-z]` designates the navigational hierarchy.
 
-### navigable elements
 
-Okay, so let's say you had a div called `#food` and a child called `#cheese`.
+### User Navigation
 
-    <nav id='main-navigation'>
-        <a href='#/cheese'>Cheese</a>
-        <a href='#/cream'>Cream</a>
-    </nav>
-    <div id='food' class='navigable-a'>
-        <div id='cheese' class='navigable-b'>
-            <ul data-bind='foreach: milkProducts.cheese'></ul>
-        </div>
-        <div id='cream' class='navigable-b'>
+Okay, so let's say you had a div called `chat-room` and two children: `chat-room-settings` and `chat-room-messages`.
+    
+    <div id='chat-room' class='navigable-a'>
+        <div id='chat-room-messages' class='navigable-b'>
             <ul data-bind='foreach: milkProducts.cream'></ul>
         </div>
+        <div id='chat-room-settings' class='navigable-b'>
+            <ul data-bind='foreach: milkProducts.cheese'></ul>
+        </div>
     </div>
-    
-When the `#/cheese` link is clicked, all siblings of `#cheese` with the same `.navigable-b` class are hidden, and all `.navigable-[a-z]` ancestors / parents of `#/cream`--in this case `#food.navigable-a`--are shown.
 
-Also note that the first decendant navigable is shown upon parent navigation. This means that when `#/food` is parsed by hasher, `#cheese` is shown and `#cream` is not.
+Please note that the placement of `chat-room-messages` as a div in front of `chat-room-settings` is important. When the URI `#/chat-room` is followed, the nav module loads the first navigable descendents of their class (in this case `#chat-room-messages.navigable-b`), and will hide from view `#chat-room-settings` until a `#/chat-room/settings` link is clicked upon.
 
-Also note that `#/food/cheese` is seen in **settings**.navigation as `#food-cheese`. The slashes are changed to dashes and the initial slash is removed. This shall be smoothed out shortly.
+The same goes for a-class navigable elements. Let's consider the following.
+
+    <div id='chat-room' class='navigable-a'>
+        <div id='chat-room-messages' class='navigable-b'>
+            <ul data-bind='foreach: milkProducts.cream'></ul>
+        </div>
+        <div id='chat-room-settings' class='navigable-b'>
+            <ul data-bind='foreach: milkProducts.cheese'></ul>
+        </div>
+    </div>
+    <div id="settings" class='navigable-a'>
+        <!-- ... -->
+    </div>
+    <div id='overview' class='navigable-a'>
+        <!-- ... -->
+    </div>
+
+Here, when the user navigates to the `#/overview` URI the `#chat-room.navigable-a` and `#settings.navigable-a` elements will be hidden from view and the `#overview.navigable-a` element will be shown.
+
+### Navigation Bar
+
+There are two parts to defining and presenting user navigation.
+
+1. Go into the **settings** module to declare the structure of your application.
+2. Insert the associative HTML into your app html file (or just use the app.html which comes with this repo).
+
+#### Step 1 - go to `settings.navigation;`
+
+The twitter-bootstrap navigational bar configuration found in the **settings** module easily defines for you what your users will see at the top of their screen for navigation.
+
+    /**
+    * Description of this navbar.
+    */
+    <userTypeA>: { // name of your navbar, most likely the type of user (i.e. guest, etc.)
+        root: '<mainViewName>',
+        children: [
+            '<userViewNameA>', // these viewNames always activate the <userTypeA> navbar
+            '<userViewNameN>'
+        ], 
+        navbar: [
+            {
+                name: '<viewNameATitle>', // name on the button
+                link: '<viewNameAURI>',
+                pos: '<left | right>'
+            }, {
+                name: '<viewNameNTitle>',
+                menu: [
+                    { // example of a drop-down menu
+                        name: '<viewNameAChildViewName>',
+                        link: '<viewNameAChildViewNameURI>'
+                    }, { ... }
+                ],
+                pos: '<left | right>'
+            }
+        ]
+    }, 
+    /**
+    * Description of this navbar.
+    */
+    <userTypeN>: { 
+        ... 
+    }
+        
+Perhaps, an example.
+
+    /**
+    * Navigational settings for the application.
+    */
+    navigation: {
+        /**
+        * As seen by first-time users.
+        */
+        guest: {
+            root: 'welcome',
+            children: [
+                'welcome',
+                'sign-in',
+                'sign-up', 
+                'forgot-password',
+                'reset-password' 
+            ], 
+            navbar: [
+                {
+                    name: 'Welcome',
+                    link: '#/welcome',
+                    pos: 'left'
+                }, {
+                    name: 'Sign Up',
+                    link: '#/sign-up',
+                    pos: 'right'
+                }, { 
+                    name: 'Sign In',
+                    link: '#/sign-in',
+                    pos: 'right'
+                }
+            ]
+        },
+        /**
+        * As seen by users.
+        */
+        user: {
+            root: 'entryway',
+            children: [ 
+                'entryway', 
+                'entryway-groups', 
+                'entryway-group-invites', 
+                'group-form',
+                'join-home'
+            ], 
+            navbar: [
+                {
+                    name: 'Entryway',
+                    link: '#/entryway',
+                    pos: 'left'
+                }, { 
+                    name: 'Create a Group',
+                    link: '#/group-form',
+                    pos: 'left'
+                }, { 
+                    name: 'Join a Group',
+                    link: '#/join-group',
+                    pos: 'left'
+                }
+            ]
+        }, 
+        /**
+        * As seen by members. 
+        */
+        member: {
+            root: 'overview',
+            children: [
+                'overview', 
+                'chat-room',
+                'people',
+                'move-out',
+                'invite-member'
+            ], 
+            navbar: [
+                {
+                    name: 'Overview', 
+                    link: '#/overview'
+                }, {
+                    name: 'Discuss', 
+                    menu: [
+                        { 
+                            name: 'Message Thread',
+                            link: '#/chat-room' 
+                        }
+                    ]
+                }, { 
+                    name: 'Manage', 
+                    menu: [
+                        {
+                            name: 'Invite Member',
+                            link: '#/invite-member'
+                        }, { 
+                            name: 'Group Settings', 
+                            link: '#/change-nickname' 
+                        }, { 
+                            name: 'Leave Group', 
+                            link: '#/move-out'
+                        }
+                    ]
+                }, {
+                    name: 'Entryway', 
+                    link: '#/leave-group'
+                }
+            ]
+        }
+    }
+
+That's it! The **nav** module will do the rest. Informational console notifications are thrown if your navigation links lead to nowhere.
 
 ## Credits
 
