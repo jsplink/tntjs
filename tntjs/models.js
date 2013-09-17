@@ -333,14 +333,16 @@ define(["underscore", "knockout", "tntjs/dataserve", "tntjs/comm", "tntjs/util"]
 	chatRoomChatMessage = Model.makeSubclass({
 		_init: function(args) {
 			var self = this;
-			console.info('constructing a chat message');
+			
 			self._class = 'chatMessage';
 			self._view = 'chatRoom';
 			self._pkey = 'chatMessageId';
+
 			self._references = { 
 				'Group': 'groupId', 
 				'Member': ['author', 'memberId']
 			};
+
 			Model.prototype._init(self, args, [
 				["Number", "chatMessageId", false],
 				["Object", "authorName", true],

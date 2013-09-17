@@ -401,6 +401,7 @@ function($, crossroads, _, ko, Util, Comm, Settings, Models) { "use strict";
         return passes;
     }
 
+    // circular reference fix, knockout style
     Models.setDataserve(mod);
 
     return {
