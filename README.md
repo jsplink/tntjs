@@ -1,9 +1,7 @@
 tntjs
 ===
 
-Simple, single-page scaffolding for developing cross-device web applications. By combining the flexibility of JavaScript with the power of rapidly evolving web standards we can greatly reduce the cost of software product development.
-
-`build status: failing` (eta this weekend)
+Simple, single-page scaffolding for developing cross-device web applications. By combining the flexibility of JavaScript with the power of rapidly evolving web standards we can greatly reduce the cost of software product development using a core UI codebase and extend into native code when needed.
 
 ## Project Modules
 * **tnt**.js - Exposes your **views** to your DOM (i.e. `data-bind="with: tnt.views"`). Also listens to the data registry and updates identity-based configurations (i.e. user or group changes). Views are auto-updated once bound to the registry.
@@ -383,9 +381,20 @@ Perhaps, an example.
 
 That's it! The **nav** module will do the rest. Informational console notifications are thrown if your navigation links lead to nowhere.
 
+## Retrospective
+
+After a few years from beginning this project I think that I've gained enough retrospective on this piece of work to comment on some areas within which one can improve. KnockoutJS is a great framework which binds "computed" and "observable" objects onto the DOM with an abstracted DOM-level api. I think the implementation and api of this library is well designed with three features standing out to me above the rest: 1) a guessable, dom-level api; 2) it's observable counter-part; and 3) the "one object per app" concept.
+
+### Use of the observable pattern
+
+I think that my use of KnockoutJS was too prolific. I used the library for implementing the observable design pattern everywhere within the application. Simple things such as configuration, for example, was applied observable design pattern. I think that this pattern is well adept for serving user interfaces; but not with all of the baggage which comes with KnockoutJS's computed and observables.
+
+KO's computed and observable objects are interfaces first and data second. Each instance is sprinkled with adapters upon the initial binding application call--perhaps on a need-to-implement basis in which case the impact is downright minimal--which adds extra weight to the objects, unnecessary weight.
+
+I think that this focus on observable patterns within user interface libraries can show a lot of promise. It's reactive.
+
 ## Credits
 
-* Madhadron (@madhadron)
 * JQuery (@jquery) 
 * Underscore (@jashkenas)
 * Twitter Bootstrap (@twbs)
