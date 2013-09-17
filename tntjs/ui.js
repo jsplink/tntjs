@@ -129,7 +129,7 @@ function($, bootstrap, moment, _, crossroads, ko, Util) { "use strict";
 				}
 			}
 		}
-	});
+	}),
 
 	/**
 	* @class sysComm
