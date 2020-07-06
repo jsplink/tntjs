@@ -9,7 +9,7 @@
     "underscore": "1.4.x",
     "bootstrap": "3.0.0",
     "moment": "2.1.0",
-    "knockout": "2.2.1",
+    "knockout": "3.5.1",
     "cryptojs": "2.5.3",
     "crossroads": "0.12.0",
     "socket.io": "0.9.16",
